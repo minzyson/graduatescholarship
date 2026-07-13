@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>2026학년도(2025 회계연도) 울산대학교 장학금 공시조사 제출 포털</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --navy:#12233f;
+    --navy-2:#1c3a63;
+    --accent:#c8963e;
+    --accent-soft:#f4e8d1;
+    --paper:#f6f4ef;
+    --line:#dcd6c9;
+    --ok:#2f7a4f;
+    --warn:#b3401f;
+    --ink:#1c1c1c;
+    --muted:#6b6558;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;
+    line-height:1.5;
+  }
+  .topbar{
+    background:var(--navy);
+    color:#fff;
+    padding:22px 28px 18px;
+    border-bottom:4px solid var(--accent);
+  }
+  .topbar h1{
+    margin:0 0 4px;
+    font-size:20px;
+    letter-spacing:.2px;
+    font-weight:700;
+  }
+  .topbar p{
+    margin:0;
+    font-size:13px;
+    color:#c9d4e3;
+  }
+  .tabs{
+    display:flex;
+    gap:2px;
+    background:var(--navy);
+    padding:0 24px;
+  }
+  .tab{
+    padding:11px 18px;
+    font-size:14px;
+    color:#c9d4e3;
+    cursor:pointer;
+    border-bottom:3px solid transparent;
+    user-select:none;
+  }
+  .tab.active{
+    color:#fff;
+    border-bottom:3px solid var(--accent);
+    font-weight:600;
+  }
+  .wrap{
+    max-width:960px;
+    margin:0 auto;
+    padding:28px 24px 80px;
+  }
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:22px 24px;
+    margin-bottom:18px;
+  }
+  .card h2{
+    font-size:16px;
+    margin:0 0 4px;
+    color:var(--navy);
+  }
+  .card .sub{
+    font-size:12.5px;
+    color:var(--muted);
+    margin:0 0 16px;
+  }
+  label.field-label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--navy-2);
+    margin:14px 0 6px;
+  }
+  select, input[type=file]{
+    width:100%;
+    padding:9px 10px;
+    border:1px solid #cfc8b8;
+    border-radius:4px;
+    font-size:13.5px;
+    background:#fff;
+    font-family:inherit;
+  }
+  .file-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    margin-bottom:8px;
+    background:#fbfaf7;
+  }
+  .file-row .ftype{
+    width:190px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--navy);
+    flex-shrink:0;
+  }
+  .file-row input[type=file]{flex:1; font-size:12.5px; padding:6px;}
+  .file-row .picked{
+    font-size:12px;
+    color:var(--ok);
+    white-space:nowrap;
+  }
+  button{
+    font-family:inherit;
+    cursor:pointer;
+    border:none;
+    border-radius:4px;
+    font-weight:600;
+    font-size:13.5px;
+  }
+  .btn-primary{
+    background:var(--navy);
+    color:#fff;
+    padding:11px 22px;
+    margin-top:16px;
+  }
+  .btn-primary:hover{background:var(--navy-2);}
+  .btn-primary:disabled{background:#9aa4b1; cursor:not-allowed;}
+  .btn-ghost{
+    background:#fff;
+    border:1px solid var(--line);
+    color:var(--navy);
+    padding:8px 14px;
+  }
+  .btn-ghost:hover{background:var(--accent-soft);}
+  .btn-danger{
+    background:#fff;
+    border:1px solid var(--warn);
+    color:var(--warn);
+    padding:6px 10px;
+    font-size:12px;
+  }
+  .notice{
+    font-size:12px;
+    color:var(--muted);
+    background:var(--accent-soft);
+    border:1px solid #e6d3a3;
+    border-radius:4px;
+    padding:10px 12px;
+    margin-bottom:16px;
+  }
+  .status-msg{
+    margin-top:12px;
+    font-size:13px;
+    padding:10px 12px;
+    border-radius:4px;
+    display:none;
+  }
+  .status-msg.ok{display:block;background:#e8f3ec;color:var(--ok);border:1px solid #bfe0cc;}
+  .status-msg.err{display:block;background:#fbe9e3;color:var(--warn);border:1px solid #f0c3ae;}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  th,td{
+    border:1px solid var(--line);
+    padding:9px 10px;
+    text-align:center;
+  }
+  th{
+    background:var(--navy);
+    color:#fff;
+    font-weight:600;
+    font-size:12.5px;
+  }
+  td.unit-name{
+    text-align:left;
+    font-weight:600;
+    color:var(--navy-2);
+    background:#fbfaf7;
+  }
+  .badge-ok{color:var(--ok); font-weight:700;}
+  .badge-no{color:#b9b2a0;}
+  .ts{display:block; font-size:10.5px; color:var(--muted); font-weight:400; margin-top:2px;}
+  .group-tag{
+    display:inline-block;
+    font-size:10.5px;
+    padding:2px 7px;
+    border-radius:10px;
+    margin-left:6px;
+    font-weight:700;
+  }
+  .g-general{background:#dde7f4;color:#1c3a63;}
+  .g-undergrad{background:#e6e1f2;color:#4a3a7a;}
+  .g-special{background:#f4e8d1;color:#7a5a19;}
+  .g-pro{background:#e3ecdf;color:#3a5a2f;}
+  .merge-block{
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:16px 18px;
+    margin-bottom:14px;
+    background:#fbfaf7;
+  }
+  .merge-block h3{
+    margin:0 0 4px;
+    font-size:14.5px;
+    color:var(--navy);
+  }
+  .merge-block .members{
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  .missing{color:var(--warn); font-weight:600;}
+  .footer-note{
+    font-size:11.5px;
+    color:var(--muted);
+    margin-top:30px;
+    border-top:1px solid var(--line);
+    padding-top:14px;
+  }
+  .loading-overlay{
+    position:fixed; inset:0; background:rgba(18,35,63,.55);
+    display:none; align-items:center; justify-content:center; z-index:50;
+  }
+  .loading-box{
+    background:#fff; padding:20px 26px; border-radius:6px; font-size:14px; color:var(--navy);
+  }
+  .admin-gate{
+    display:flex; gap:8px; align-items:center; margin-bottom:10px;
+  }
+  .admin-gate input{padding:8px 10px; border:1px solid var(--line); border-radius:4px; font-size:13px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>2026학년도(2025 회계연도) 울산대학교 장학금 공시조사 제출 포털</h1>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-tab="submit">파일 제출</div>
+  <div class="tab" data-tab="status">제출 현황판</div>
+  <div class="tab" data-tab="admin">관리자: 파일 통합</div>
+</div>
+
+<div class="wrap">
+
+  <!-- 제출 탭 -->
+  <div class="panel" id="panel-submit">
+    <div class="card">
+      <h2>담당 대학원 파일 제출</h2>
+      <p class="sub">소속 대학원을 선택하고, <strong>4종 파일을 모두 선택</strong>해야 제출할 수 있습니다. 하나라도 빠지면 제출 버튼이 활성화되지 않습니다. 다시 제출하면 이전 제출을 덮어씁니다.</p>
+
+      <label class="field-label">소속 대학원</label>
+      <select id="unitSelect"></select>
+
+      <div id="fileRows" style="margin-top:14px;"></div>
+
+      <button class="btn-primary" id="submitBtn" disabled>4종 파일을 모두 선택하면 제출할 수 있습니다</button>
+      <div class="status-msg" id="submitMsg"></div>
+    </div>
+  </div>
+
+  <!-- 현황 탭 -->
+  <div class="panel" id="panel-status" style="display:none;">
+    <div class="card">
+      <h2>제출 현황판</h2>
+      <p class="sub">전체 8개 대학원의 파일별 제출 여부입니다.</p>
+      <button class="btn-ghost" id="refreshStatusBtn">새로고침</button>
+      <div style="margin-top:14px; overflow-x:auto;">
+        <table id="statusTable"></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관리자 탭 -->
+  <div class="panel" id="panel-admin" style="display:none;">
+    <div class="card">
+      <h2>관리자: 최종 제출 파일 만들기</h2>
+      <p class="sub">그룹별로 제출된 파일을 모아 최종 3개 파일(일반대학원 / 특수대학원 통합 / 전문대학원)을 생성합니다. 특수대학원은 학교별 데이터를 그대로 이어붙여 통합하며, 비율·퍼센트 값을 합산하지 않습니다.</p>
+
+      <div id="adminBody"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-box" id="loadingText">처리 중...</div></div>
+
+<script>
+/* ---------------- 설정 ---------------- */
+const UNITS = [
+  { key:'undergrad',  name:'학부',                  group:'undergrad' },
+  { key:'general',    name:'일반대학원',            group:'general' },
+  { key:'sp_policy',  name:'정책대학원',            group:'special' },
+  { key:'sp_biz',     name:'경영대학원',            group:'special' },
+  { key:'sp_ind',     name:'산업대학원',            group:'special' },
+  { key:'sp_edu',     name:'교육대학원',            group:'special' },
+  { key:'sp_battery', name:'차세대이차전지융합대학원', group:'special' },
+  { key:'sp_carbon',  name:'탄소중립기술융합대학원', group:'special' },
+  { key:'pro_med',    name:'의과학대학원',          group:'professional' },
+];
+const GROUP_LABEL = { undergrad:'학부', general:'일반', special:'특수', professional:'전문' };
+const GROUP_CLASS = { undergrad:'g-undergrad', general:'g-general', special:'g-special', professional:'g-pro' };
+
+const FILE_TYPES = [
+  { key:'naeguk', label:'교내장학금 현황',    mode:'simple',  headerRows:5 },
+  { key:'oeguk',  label:'교외장학금 현황',    mode:'simple',  headerRows:5 },
+  { key:'silin',  label:'장학금 실인원',      mode:'simple',  headerRows:2 },
+  { key:'hakbi',  label:'학비감면 준수여부',  mode:'hakbi' },
+];
+
+const ADMIN_PIN = '1166'; // 필요 시 원하는 값으로 변경해서 사용하세요
+
+/* ---------------- 유틸 ---------------- */
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload = ()=> resolve(r.result.split(',')[1]);
+    r.onerror = ()=> reject(new Error('파일을 읽는 데 실패했습니다.'));
+    r.readAsDataURL(file);
+  });
+}
+function showLoading(msg){
+  document.getElementById('loadingText').textContent = msg || '처리 중...';
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+function hideLoading(){
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+function fmtTs(ts){
+  if(!ts) return '';
+  const d = new Date(ts);
+  return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+function subKey(unitKey){ return 'sub:'+unitKey; }
+
+// 아티팩트 로드 직후에는 window.storage가 아직 주입되지 않았을 수 있어, 준비될 때까지 잠시 기다린다.
+function ensureStorage(timeoutMs){
+  timeoutMs = timeoutMs || 4000;
+  return new Promise((resolve, reject)=>{
+    const startedAt = Date.now();
+    (function check(){
+      if(window.storage && typeof window.storage.set === 'function'){
+        resolve(window.storage);
+      } else if(Date.now() - startedAt > timeoutMs){
+        reject(new Error('저장 기능을 아직 사용할 수 없습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.'));
+      } else {
+        setTimeout(check, 100);
+      }
+    })();
+  });
+}
+
+let submissionCache = {}; // unitKey -> record object (in-memory cache to cut down on storage calls)
+
+async function getSubmission(unitKey, forceRefresh){
+  if(!forceRefresh && submissionCache[unitKey] !== undefined) return submissionCache[unitKey];
+  try{
+    const storage = await ensureStorage();
+    const res = await storage.get(subKey(unitKey), true);
+    const val = (res && res.value) ? JSON.parse(res.value) : null;
+    submissionCache[unitKey] = val;
+    return val;
+  }catch(e){
+    submissionCache[unitKey] = null;
+    return null;
+  }
+}
+
+/* ---------------- 탭 전환 ---------------- */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+    document.getElementById('panel-'+t.dataset.tab).style.display='block';
+    if(t.dataset.tab==='status') renderStatus();
+    if(t.dataset.tab==='admin') renderAdmin();
+  });
+});
+
+/* ---------------- 제출 탭 ---------------- */
+const unitSelect = document.getElementById('unitSelect');
+UNITS.forEach(u=>{
+  const opt = document.createElement('option');
+  opt.value = u.key;
+  opt.textContent = u.name + ' (' + GROUP_LABEL[u.group] + ')';
+  unitSelect.appendChild(opt);
+});
+
+let pickedFiles = {}; // fileKey -> File
+
+function renderFileRows(){
+  pickedFiles = {};
+  const wrap = document.getElementById('fileRows');
+  wrap.innerHTML = '';
+  FILE_TYPES.forEach(ft=>{
+    const row = document.createElement('div');
+    row.className = 'file-row';
+    row.innerHTML = `
+      <div class="ftype">${ft.label}</div>
+      <input type="file" accept=".xlsx" data-ftkey="${ft.key}">
+      <div class="picked" data-pickedfor="${ft.key}"></div>
+    `;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('input[type=file]').forEach(inp=>{
+    inp.addEventListener('change', (e)=>{
+      const key = e.target.dataset.ftkey;
+      const f = e.target.files[0];
+      if(f){
+        pickedFiles[key] = f;
+        wrap.querySelector(`[data-pickedfor="${key}"]`).textContent = '선택됨: ' + f.name;
+      } else {
+        delete pickedFiles[key];
+        wrap.querySelector(`[data-pickedfor="${key}"]`).textContent = '';
+      }
+      updateSubmitBtnState();
+    });
+  });
+  updateSubmitBtnState();
+}
+
+function updateSubmitBtnState(){
+  const btn = document.getElementById('submitBtn');
+  const complete = FILE_TYPES.every(ft => pickedFiles[ft.key]);
+  btn.disabled = !complete;
+  btn.textContent = complete ? '4종 파일 제출하기' : `4종 파일을 모두 선택하면 제출할 수 있습니다 (${Object.keys(pickedFiles).length}/4 선택됨)`;
+}
+renderFileRows();
+unitSelect.addEventListener('change', renderFileRows);
+
+document.getElementById('submitBtn').addEventListener('click', async ()=>{
+  const msg = document.getElementById('submitMsg');
+  msg.className = 'status-msg';
+  const keys = Object.keys(pickedFiles);
+  const missing = FILE_TYPES.filter(ft => !pickedFiles[ft.key]).map(ft => ft.label);
+  if(missing.length > 0){
+    msg.classList.add('err');
+    msg.textContent = '아직 선택되지 않은 파일이 있습니다: ' + missing.join(', ');
+    return;
+  }
+  const unitKey = unitSelect.value;
+  showLoading('파일을 저장하는 중...');
+  try{
+    const record = { ts: Date.now() };
+    for(const ftKey of keys){
+      const file = pickedFiles[ftKey];
+      const base64 = await fileToBase64(file);
+      record[ftKey] = { filename:file.name, base64, size:file.size };
+    }
+    const storage = await ensureStorage();
+    const res = await storage.set(subKey(unitKey), JSON.stringify(record), true);
+    if(!res) throw new Error('저장에 실패했습니다.');
+    submissionCache[unitKey] = record;
+    msg.classList.add('ok');
+    msg.textContent = '제출 완료: 4종 파일이 저장되었습니다.';
+  }catch(err){
+    msg.classList.add('err');
+    msg.textContent = '오류가 발생했습니다: ' + err.message;
+  }finally{
+    hideLoading();
+  }
+});
+
+/* ---------------- 현황 탭 ---------------- */
+async function renderStatus(){
+  const table = document.getElementById('statusTable');
+  table.innerHTML = '<tr><td colspan="5">불러오는 중...</td></tr>';
+  try{
+    let thead = '<tr><th style="text-align:left;">대학원</th>';
+    FILE_TYPES.forEach(ft=> thead += `<th>${ft.label}</th>`);
+    thead += '</tr>';
+
+    const rows = [];
+    for(const u of UNITS){
+      let rowHtml = `<td class="unit-name">${u.name}<span class="group-tag ${GROUP_CLASS[u.group]}">${GROUP_LABEL[u.group]}</span></td>`;
+      const record = await getSubmission(u.key, true);
+      for(const ft of FILE_TYPES){
+        let cell = '<span class="badge-no">미제출</span>';
+        if(record && record[ft.key]){
+          const data = record[ft.key];
+          cell = `<span class="badge-ok">제출됨</span><span class="ts">${data.filename}<br>${fmtTs(record.ts)}</span>`;
+        }
+        rowHtml += `<td>${cell}</td>`;
+      }
+      rows.push('<tr>'+rowHtml+'</tr>');
+    }
+    table.innerHTML = thead + rows.join('');
+  }catch(err){
+    table.innerHTML = '<tr><td>불러오기 실패: '+err.message+'</td></tr>';
+  }
+}
+
+/* ---------------- 관리자 탭 ---------------- */
+async function renderAdmin(){
+  const body = document.getElementById('adminBody');
+  body.innerHTML = `
+    <div class="admin-gate">
+      <span style="font-size:13px;">관리자 PIN</span>
+      <input type="password" id="adminPin" placeholder="PIN 입력">
+      <button class="btn-ghost" id="adminUnlockBtn">확인</button>
+    </div>
+    <div id="adminLocked" style="font-size:13px; color:var(--muted);">PIN을 입력하면 통합 도구가 표시됩니다.</div>
+    <div id="adminTools" style="display:none;"></div>
+  `;
+  document.getElementById('adminUnlockBtn').addEventListener('click', ()=>{
+    if(document.getElementById('adminPin').value === ADMIN_PIN){
+      document.getElementById('adminLocked').style.display = 'none';
+      document.getElementById('adminTools').style.display = 'block';
+      buildAdminTools();
+    }else{
+      alert('PIN이 올바르지 않습니다.');
+    }
+  });
+}
+
+function buildAdminTools(){
+  const tools = document.getElementById('adminTools');
+  const groups = [
+    { key:'undergrad', title:'① 학부 최종 파일', units: UNITS.filter(u=>u.group==='undergrad'), tag:'학부' },
+    { key:'general', title:'② 일반대학원 최종 파일', units: UNITS.filter(u=>u.group==='general'), tag:'일반대학원' },
+    { key:'special', title:'③ 특수대학원 통합 파일 (6개교 병합)', units: UNITS.filter(u=>u.group==='special'), tag:'특수대학원_통합' },
+    { key:'professional', title:'④ 전문대학원 최종 파일', units: UNITS.filter(u=>u.group==='professional'), tag:'전문대학원' },
+  ];
+
+  tools.innerHTML = `<button class="btn-ghost" id="adminRefreshBtn" style="margin-bottom:14px;">전체 새로고침 (최신 제출 현황 반영)</button>` + groups.map(g=>`
+    <div class="merge-block" id="block-${g.key}">
+      <h3>${g.title}</h3>
+      <div class="members">대상: ${g.units.map(u=>u.name).join(', ')}</div>
+      <div class="check-area" id="check-${g.key}">확인 중...</div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+        ${FILE_TYPES.map(ft=>`<button class="btn-primary" data-group="${g.key}" data-ft="${ft.key}">${ft.label} 파일 생성</button>`).join('')}
+      </div>
+      <div class="status-msg" id="msg-${g.key}"></div>
+    </div>
+  `).join('') + `
+    <div class="merge-block">
+      <h3>개별 대학원 파일 다운로드</h3>
+      <div class="members">대학원 1곳을 선택해, 그 학교가 제출한 원본 데이터를 파일 종류별로 따로 내려받습니다. (특수대학원 6개교 각각도 개별 다운로드 가능)</div>
+      <select id="indivUnit" style="margin-bottom:10px;"></select>
+      <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        ${FILE_TYPES.map(ft=>`<button class="btn-ghost" data-indiv-ft="${ft.key}">${ft.label} 다운로드</button>`).join('')}
+      </div>
+      <div class="status-msg" id="msg-indiv"></div>
+    </div>
+  ` + `
+    <div class="merge-block">
+      <h3>제출 데이터 초기화</h3>
+      <div class="members">선택한 대학원의 제출(4종 파일 전체)을 한 번에 삭제합니다. 되돌릴 수 없습니다.</div>
+      <select id="resetUnit"></select>
+      <button class="btn-danger" id="resetBtn" style="margin-top:10px;">이 대학원 제출 전체 삭제</button>
+      <div class="status-msg" id="resetMsg"></div>
+    </div>
+  `;
+
+  UNITS.forEach(u=>{
+    const o = document.createElement('option'); o.value=u.key; o.textContent=u.name;
+    document.getElementById('resetUnit').appendChild(o);
+    const o2 = document.createElement('option'); o2.value=u.key; o2.textContent=u.name;
+    document.getElementById('indivUnit').appendChild(o2);
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', async ()=>{
+    const msg = document.getElementById('resetMsg');
+    const uk = document.getElementById('resetUnit').value;
+    if(!confirm('정말 삭제하시겠습니까? 되돌릴 수 없습니다.')) return;
+    try{
+      const storage = await ensureStorage();
+      await storage.delete(subKey(uk), true);
+      submissionCache[uk] = null;
+      msg.className='status-msg ok'; msg.textContent='삭제되었습니다.';
+    }catch(e){
+      msg.className='status-msg err'; msg.textContent='삭제 실패: '+e.message;
+    }
+  });
+
+  document.getElementById('adminRefreshBtn').addEventListener('click', ()=> buildAdminTools());
+
+  // 그룹별 파일종류 버튼
+  tools.querySelectorAll('button[data-group]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const g = groups.find(x=>x.key===btn.dataset.group);
+      const ft = FILE_TYPES.find(x=>x.key===btn.dataset.ft);
+      generateGroupFile(g, ft);
+    });
+  });
+
+  // 개별 대학원 버튼
+  tools.querySelectorAll('button[data-indiv-ft]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const unit = UNITS.find(u=>u.key === document.getElementById('indivUnit').value);
+      const ft = FILE_TYPES.find(x=>x.key===btn.dataset.indivFt);
+      generateIndividualFile(unit, ft);
+    });
+  });
+
+  groups.forEach(async (g)=>{
+    const checkArea = document.getElementById('check-'+g.key);
+    let thead = '<tr><th style="text-align:left;">대학원</th>' + FILE_TYPES.map(ft=>`<th>${ft.label}</th>`).join('') + '</tr>';
+    let rowsHtml = '';
+    for(const u of g.units){
+      const record = await getSubmission(u.key, true);
+      let row = `<td class="unit-name">${u.name}</td>`;
+      FILE_TYPES.forEach(ft=>{
+        const has = record && record[ft.key];
+        row += `<td>${has ? '<span class="badge-ok">제출완료</span>' : '<span class="badge-no">미제출</span>'}</td>`;
+      });
+      rowsHtml += '<tr>'+row+'</tr>';
+    }
+    checkArea.innerHTML = `<table style="margin-top:6px;">${thead}${rowsHtml}</table>`;
+  });
+}
+
+/* --- 시트 데이터 추출 --- */
+function workbookFromBase64(base64){
+  return XLSX.read(base64, { type:'base64' });
+}
+function sheetToAOA(ws){
+  return XLSX.utils.sheet_to_json(ws, { header:1, defval:null, raw:true });
+}
+function extractSimple(wb, headerRows){
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const aoa = sheetToAOA(ws);
+  return { header: aoa.slice(0, headerRows), data: aoa.slice(headerRows) };
+}
+function extractHakbi(wb){
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const aoa = sheetToAOA(ws);
+  return {
+    header1: aoa.slice(0,3),
+    data1: aoa.slice(3,6),
+    header2: aoa.slice(7,9),
+    data2: aoa.slice(9)
+  };
+}
+
+// 파일 종류(ft) 하나에 대해, 여러 학교의 워크북 목록을 받아 병합된 aoa(표 데이터)를 만든다.
+// 학교가 1곳이면 사실상 원본 그대로 통과된다.
+function mergeFT(ft, wbList){
+  if(ft.mode === 'simple'){
+    let header = null;
+    let dataAll = [];
+    wbList.forEach(wb=>{
+      const ext = extractSimple(wb, ft.headerRows);
+      if(!header) header = ext.header;
+      dataAll = dataAll.concat(ext.data);
+    });
+    return header.concat(dataAll);
+  } else if(ft.mode === 'hakbi'){
+    let header1=null, header2=null, data1All=[], data2All=[];
+    wbList.forEach(wb=>{
+      const ext = extractHakbi(wb);
+      if(!header1) header1 = ext.header1;
+      if(!header2) header2 = ext.header2;
+      data1All = data1All.concat(ext.data1);
+      data2All = data2All.concat(ext.data2);
+    });
+    return header1.concat(data1All).concat([[]]).concat(header2).concat(data2All);
+  }
+}
+
+async function generateGroupFile(g, ft){
+  const msg = document.getElementById('msg-'+g.key);
+  msg.className = 'status-msg';
+  showLoading(g.title + ' · ' + ft.label + ' 생성 중...');
+  try{
+    const wbList = [];
+    for(const u of g.units){
+      const record = await getSubmission(u.key, true);
+      const sub = record ? record[ft.key] : null;
+      if(sub) wbList.push(workbookFromBase64(sub.base64));
+    }
+    if(wbList.length === 0){
+      msg.className = 'status-msg err';
+      msg.textContent = ft.label + ': 제출된 학교가 하나도 없어 생성할 수 없습니다.';
+      hideLoading();
+      return;
+    }
+    const aoaOut = mergeFT(ft, wbList);
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(aoaOut);
+    XLSX.utils.book_append_sheet(wb, ws, ft.label.slice(0,30));
+    const filename = `${ft.label}_${g.tag}.xlsx`;
+    XLSX.writeFile(wb, filename);
+    msg.className = 'status-msg ok';
+    msg.textContent = '생성 완료: ' + filename + ` (${wbList.length}개교 반영, 다운로드 시작)`;
+  }catch(err){
+    msg.className = 'status-msg err';
+    msg.textContent = '오류: ' + err.message;
+  }finally{
+    hideLoading();
+  }
+}
+
+async function generateIndividualFile(unit, ft){
+  const msg = document.getElementById('msg-indiv');
+  msg.className = 'status-msg';
+  showLoading(unit.name + ' · ' + ft.label + ' 생성 중...');
+  try{
+    const record = await getSubmission(unit.key, true);
+    const sub = record ? record[ft.key] : null;
+    if(!sub){
+      msg.className = 'status-msg err';
+      msg.textContent = unit.name + '이(가) 아직 ' + ft.label + ' 파일을 제출하지 않았습니다.';
+      hideLoading();
+      return;
+    }
+    const wb = workbookFromBase64(sub.base64);
+    const aoaOut = mergeFT(ft, [wb]);
+    const outWb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(aoaOut);
+    XLSX.utils.book_append_sheet(outWb, ws, ft.label.slice(0,30));
+    const filename = `${ft.label}_${unit.name}.xlsx`;
+    XLSX.writeFile(outWb, filename);
+    msg.className = 'status-msg ok';
+    msg.textContent = '생성 완료: ' + filename + ' (다운로드 시작)';
+  }catch(err){
+    msg.className = 'status-msg err';
+    msg.textContent = '오류: ' + err.message;
+  }finally{
+    hideLoading();
+  }
+}
+</script>
+
+</body>
+</html>
